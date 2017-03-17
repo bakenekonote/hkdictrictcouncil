@@ -7,6 +7,16 @@ import json
 import csv
 import pdb
 import argparse
+import urllib
+
+def email_decode(crypted_email):
+	e = ''
+	r = int(crypted_email[0:2], 16) | 0
+	n = 2
+	while len(crypted_email) > n:
+		e += '%' + "%0.2x" % (int(crypted_email[n:n+2],16)^r)
+		n += 2
+	return urllib.unquote(e).decode('utf8') 
 
 
 parser = argparse.ArgumentParser()
@@ -44,7 +54,11 @@ for a in area:
 		d[u"地址"] = re.sub(u'\r\n', u'|', contact_e.find('./tr[1]/td[2]').text_content().strip())
 		d[u"電話"] = contact_e.find('./tr[2]/td[2]').text_content().strip()
 		d[u"傳真"] = contact_e.find('./tr[3]/td[2]').text_content().strip()
-		d[u"電郵地址"] = contact_e.find('./tr[4]/td[2]').text_content().strip()
+		emails = contact_e.findall('.//span[@class="__cf_email__"]')
+		email_list = [];
+		for email in emails:
+			email_list.append(email_decode(email.get("data-cfemail")))
+		d[u"電郵地址"] = ";".join(email_list)
 		d[u"網頁"] = contact_e.find('./tr[5]/td[2]/span').text_content().strip()
 		db.append(d)
 
