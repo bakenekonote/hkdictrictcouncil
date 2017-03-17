@@ -54,7 +54,7 @@ for a in area:
 		d[u"地址"] = re.sub(u'\r\n', u'|', contact_e.find('./tr[1]/td[2]').text_content().strip())
 		d[u"電話"] = contact_e.find('./tr[2]/td[2]').text_content().strip()
 		d[u"傳真"] = contact_e.find('./tr[3]/td[2]').text_content().strip()
-		emails = contact_e.findall('.//span[@class="__cf_email__"]')
+		emails = contact_e.findall('.//*[@data-cfemail]')
 		email_list = [];
 		for email in emails:
 			email_list.append(email_decode(email.get("data-cfemail")))
